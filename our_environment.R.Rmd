@@ -1,0 +1,18 @@
+# 1061RLadsGroup4
+
+#our_environments.R
+
+```{r list.our_environments, echo=TRUE}
+our_environment <- list(
+  Aileen = "x86_64-apple-darwin15.6.0 (64-bit)",
+  Tony = "x86_64-w64-mingw32/x64 (64-bit)",
+  Vincent = "x86_64-w64-mingw32/x64 (64-bit)", 
+  Kathy = "x86_64-apple-darwin15.6.0 (64-bit)", 
+  Richard = "x86_64-w64-mingw32/x64 (64-bit)", 
+  Chen = "x86_64-apple-darwin15.6.0 (64-bit)"
+  )
+
+our_environment
+```
+
+
