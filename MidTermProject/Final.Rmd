@@ -1,0 +1,98 @@
+---
+title: "Midterm project"
+author: "G4"
+date: "November 15, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#期中小專題
+##by Group 4 
+
+
+In this mid-term project, we are required to utilize information obtainable from Facebook and transform it into some form of presentable data. After much discussion, trial and errors, our group eventually came out with an idea to compare users' behaviors between Apple users and Microsoft users. We postulate that Apple users are generally from a younger age group while Microsoft users are more mature and are professionals in majority.
+
+For the purpose of proving our theory, we resolved to capture most frequently used words in the comments under several posts published on Apple and Microsoft official Facebook page. We used the exact same procedures for both aspects to ensure uniformity. The results are shown below.
+
+
+```{r}
+token = "EAACEdEose0cBAP0LcvM5iXf66PbwJ6XeZBqEyCFZBaQscgeWtqZCyAKfZC0tFIlzc11XqRtNl8zjOs7mRypkbmmVBl7WDkvfMV47vvVm9ZC1b90mUCdOnTbnmAOW6LWthViWGa2EkGl7mnObaTR6spfXf98FIJtMnKlPrLEbpGloDFcoDY6cZBaBL5j9PdoYx7xjruhgKgfgZDZD"
+```
+
+
+```{r}
+#Apple
+library(Rfacebook)
+library(magrittr)
+library(tm)
+library(wordcloud2)
+library(textstem)
+ApplePage <- getPage(347415678745050,token,n=300)
+ApplePost <- vector("list",300)
+for(i in 1:300){
+post <- getPost(ApplePage$id[i],token)
+ApplePost[i] <- paste(post$comments$message, collapse="")
+}
+words <- strsplit(as.character(ApplePost)," ")
+words <- gsub("[[:punct:]]", "", words)
+chars <- VCorpus(VectorSource(words)) %>%
+tm_map(content_transformer(tolower)) %>%
+tm_map(removeWords, stopwords("english")) %>%
+tm_map(removeWords, stopwords("spanish"))
+new <- lemmatize_words(chars)
+doc <- DocumentTermMatrix(new)
+freq_terms <- findFreqTerms(doc, 5)
+freq_vec <- sapply(freq_terms, function(x){sum(doc[, x])})
+freq_vec <- freq_vec[order(-freq_vec)]
+freq_fin <- as.data.frame(freq_vec)
+word <- row.names(freq_fin)
+Applefreq <- cbind(word,freq_fin)
+colnames(Applefreq) <- c("word","freq")
+wordcloud2(Applefreq,size=1,color="random-light",backgroundColor="white")
+```
+
+```{r}
+#Microsoft
+library(magrittr)
+library(tm)
+library(wordcloud2)
+library(textstem)
+MicrosoftPage <- getPage(125751280950949,token,n=300)
+MicrosoftPost <- vector("list",300)
+for(i in 1:300){
+post <- getPost(MicrosoftPage$id[i],token)
+MicrosoftPost[i] <- paste(post$comments$message, collapse="")
+}
+mwords <- strsplit(as.character(MicrosoftPost)," ")
+mwords <- gsub("[[:punct:]]", "", mwords)
+mchars <- VCorpus(VectorSource(mwords)) %>%
+tm_map(content_transformer(tolower)) %>%
+tm_map(removeWords, stopwords("spanish")) %>%
+tm_map(removeWords, stopwords("english"))
+mnew <- lemmatize_words(mchars)
+mdoc <- DocumentTermMatrix(mnew)
+mfreq_terms <- findFreqTerms(mdoc,5)
+mfreq_vec <- sapply(mfreq_terms, function(x){sum(mdoc[, x])})
+mfreq_vec <- mfreq_vec[order(-mfreq_vec)]
+mfreq_fin <- as.data.frame(mfreq_vec)
+mword <- row.names(mfreq_fin)
+Microsoftfreq <- cbind(mword,mfreq_fin)
+colnames(Microsoftfreq) <- c("word","freq")
+wordcloud2(Microsoftfreq,size=2,color="random-light",backgroundColor="white")
+```
+
+
+##Analysis
+
+According to the results above, we agreed on several conclusions as listed:
+>1. WordClouds gave a clear impression that Microsoft users are more eloquent in Spanish compared to Apple users. 
+>2. Initially, we speculated that Apple users tend to be represented by a younger age group than Microsoft users based on some preceding paradigm. However, the outcome we obtained showed otherwise. In fact, by analysing the terms used by Apple users, the top significant words are "apple", "iphone", "phone", and mostly colors and descriptive words assumed to be commenting on the products released in posts. On the other hand, though, Microsoft Facebook users used words carrying more lively and anticipating meanings, such as, "xbox", "problem", "internet", "power", "jurgos" (meaning games in Spanish), and also several hashtags ending with "challenge" which shows participation of audience in Facebook events initiated by Microsoft, and this brings us to the next assumption, which is
+>3. Microsoft utilizes Facebook as a platform for advertisements and interaction with its users more than Apple do. From our analysis, the official page of Apple showed mostly new released products and release announcements, while Microsoft posted contents that are more enticing, engaging and encourages participations.
+	
+
+##In a nutshell 
+
+To conclude, our initial postulate that Apple users are younger in general and Microsoft users are more mature was not supported by the outcome we obtained. In fact, from our source of information, we realized that Microsoft users are engaging more actively in social media to acquire information about the products they are using. Based on the characteristic of words used, we can speculate that Microsoft users on Facebook seemed to be more active and might hint that the users are younger in age, although this assumption may not accurately represent the whole community.
+
