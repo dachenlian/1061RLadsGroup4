@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ##by Group 4 
 
 
-In this mid-term project, we are required to utilize information obtainable from Facebook and transform it into some form of presentable data. After much discussion, trial and errors, our group eventually came out with an idea to compare users' behaviors between Apple users and Microsoft users. We postulate that Apple users are generally from a younger age group while Microsoft users are more mature and are professionals in majority.
+In this mid-term project, we are required to utilize information obtainable from Facebook and transform it into some form of presentable data. After much discussion and trial and errors, our group eventually decided to compare behaviors between Apple users and Microsoft users. We postulate that Apple users are generally from a younger age group while Microsoft users are more mature and are mostly  professionals.
 
-For the purpose of proving our theory, we resolved to capture most frequently used words in the comments under several posts published on Apple and Microsoft official Facebook page. We used the exact same procedures for both aspects to ensure uniformity. The results are shown below.
+For the purpose of proving our theory, we resolved to capture the most frequently used words in the comments under several posts published on an  Apple fanpage and Microsoft's official Facebook page. We used the exact same procedures for both groups to ensure uniformity. The results are shown below.
 
 
 ```{r}
