@@ -1,0 +1,64 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(Rfacebook)
+token <- 'EAACEdEose0cBAOYiTIupjKAaJh4upqywYKbZCBhMtBLOfGoohVDthylnZBp3CgSvZCo8P2WHBy8qzZB6BOAYprlYkSF6u8hIbrhtvRy5i9wD8XZAotJI0vnEDsBbOEfhgxDjI6LBjcnt1ZAZCiOOXY3TmG86wcqAxmAXvGfUoxtAWwIMLqey48375wGG0cHIwMLO1mNfcjrxQZDZD'
+ApplePage <- getPage(347415678745050,token,n=300)
+ApplePost <- vector("list",100)
+  for(i in 1:100){
+    post <- getPost(ApplePage$id[i],token)
+    ApplePost[i] <- paste(post$comments$message, collapse="")
+  }
+ApplePost
+library(readr)
+library(magrittr)
+library(tm)
+library(textstem)
+App1 <- strsplit(as.character(ApplePost), " ")
+App1 <- gsub("\\.", "", App1)
+App1 <- gsub("\\,", "", App1)
+App1 <- gsub("[[:punct:]]", "", App1)
+vc <- VCorpus(VectorSource(App1)) %>%
+  tm_map(content_transformer(tolower))%>%
+  tm_map(removeWords,stopwords("english"))
+lemmatize_words(vc)
+vc
+dtm <- DocumentTermMatrix(vc)
+inspect(dtm)
+freq_terms <- findFreqTerms(dtm,5)
+freq_vec <- sapply(freq_terms, function(x){sum(dtm[, x])})
+freq_vec <- freq_vec[order(-freq_vec)]
+freq_vec
+freq_vec <- as.data.frame(freq_vec)
+#library(tidyverse)
+#freq_vec <- freq_vec %>%
+#rownames_to_column(var = "word") %>%
+#rename(freq = freq_vec)
+#library(wordcloud2)
+#wordcloud2(freq_vec, size = 1,shape = 'round')
+```
+
+```{r}
+library(tidyverse)
+freq_vec <- freq_vec %>%
+rownames_to_column(var = "word") %>%
+rename(freq = freq_vec)
+library(wordcloud2)
+wordcloud2(freq_vec, size = 1,shape = 'round')
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
